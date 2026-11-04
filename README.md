@@ -1,68 +1,51 @@
-# Oracle Network — Decentralized Data Feeds
+# Oracle Network
 
-> A push/pull data oracle where reporters stake on values, readers consume verified aggregates per report, and reports are versioned and contested on-chain - the smallest oracle on the network.
+Read data feeds and their update timestamps. Only approved oracle addresses can publish updates.
 
-## What it does
+## Mainnet status
 
-A push/pull data oracle where reporters stake on values, readers consume verified aggregates per report, and reports are versioned and contested on-chain - the smallest oracle on the network. The entire lifecycle lives in one contract, every button in the UI calls a real function on it — there is no mock backend.
+Contract on BOT Chain mainnet (677): [0xdC67CBCCf665eA00283Eefc34396b3C700BF436c](https://scan.botchain.ai/address/0xdC67CBCCf665eA00283Eefc34396b3C700BF436c).
 
-## Contract
+Wallet actions require BOT Chain mainnet, deployed bytecode, and a connected compatible wallet. Every action is simulated before a transaction review; only a subsequent wallet confirmation can send it.
 
-| | |
+## Interface
+
+- Live reads use the configured mainnet address; an unavailable RPC produces an explicit error.
+- No seeded financial metrics, synthetic receipts, or assessment traces appear in the product.
+- Management actions require proof of the connected account’s owner, creator, oracle, merchant, guardian, or record role. The contract remains the authority.
+- Account/network changes invalidate an open transaction review.
+- The footer provides BOT Chain and BOTScan homepage links; deployed products also link to their contract.
+- Ethers is vendored locally with its license. No CDN script is required for wallet or contract operations.
+
+## Contract interface
+
+`frontend/product.json` uses the current-source ABI, verified against the deployed mainnet bytecode.
+
+| Action | Contract signature |
 |---|---|
-| File | `contracts/OracleNetwork.sol` |
-| Contract name | `OracleNetwork` (inherits `ReentrancyGuard, Ownable`) |
-| Solidity | `^0.8.20` |
-| State functions | 6 (of which 0 payable) |
-| Deployed (mainnet 677) | not yet deployed — placeholder `0x000…000` |
+| Authorize an oracle (owner only) | `addOracle(address)` |
+| Remove an oracle (owner only) | `removeOracle(address)` |
+| Publish a feed update | `updateData(bytes32,uint256)` |
 
-### Function surface
+## Run locally
 
-| Function | Type | Returns |
-|---|---|---|
-| `owner` | view | address |
-| `addOracle` | write | result / revert |
-| `removeOracle` | write | result / revert |
-| `updateData` | write | result / revert |
-| `getData` | view | address aggregator, uint256 value, uint256 timestamp, uint256 updateCount, bool active |
-| `isOracle` | view | bool |
+Serve the frontend over HTTP so the browser can load its configuration:
 
-### Events
-
-| Event | Signature |
-|---|---|
-| `OwnershipTransferred` | (address indexed previousOwner, address indexed newOwner) |
-| `DataUpdated` | (bytes32 indexed key, uint256 value, uint256 timestamp) |
-| `OracleAdded` | (address indexed oracle) |
-| `OracleRemoved` | (address indexed oracle) |
-
-## Network
-
-| | |
-|---|---|
-| Chain | BOT Chain Mainnet (chainId `677`) |
-| RPC | `https://rpc.botchain.ai` |
-| Explorer | `https://scan.botchain.ai` |
-| Native currency | BOT (18 decimals) |
-| Testnet | BOT Chain Testnet (chainId `968`) - `https://rpc.bohr.life` |
-
-## Frontend
-
-- **Wallet connection** - [Reown/AppKit](https://reown.com) (Web3Modal v2, inline modal, `subscribeAccount` / `subscribeNetwork`)
-- **Web3 library** - ethers.js v6 (`BrowserProvider`, `Contract`, `parseEther`)
-- **Animation** - GSAP 3 + ScrollTrigger (`expo.out` entrances, `prefers-reduced-motion` fallback renders content instantly)
-- **Zero build step** - single `index.html`, CDN imports via ESM import map; no bundler, no framework runtime
-- **Accessibility** - auto-generated `aria-label`s on all binary and form controls, focus-visible styles, button busy states
-
-## Run it locally
-
-```bash
-git clone https://github.com/Henoch4/oracle-network.git
-cd oracle-network
-# open the frontend directly (no build step)
-start frontend/index.html   # Windows
-# or serve it if your browser blocks file:// modules:
-npx serve frontend
+```sh
+python -m http.server 8080 --directory frontend
 ```
 
-> **Note** — contract addresses: the UI reads its deploy target from the `CA` constant at the top of the inline script. Until the contract is deployed to mainnet 677, the demo runs against the deterministic sample data built into the page; after deployment, set `CA['677']` to the real address and every button goes live.
+Open http://localhost:8080. Only connect a wallet when you intend to use the configured mainnet contract.
+
+## Regression test
+
+```sh
+npm install
+npm test
+```
+
+The test requires Chromium or Edge. Windows defaults to the standard Edge installation; set `BROWSER_PATH` to another Chromium executable when needed. It mocks all chain requests and broadcasts no transactions. Tests cover pending deployment, RPC failure, read-only initialization and missing-wallet handling.
+
+## Deployment and assessment
+
+Update `frontend/product.json` only after confirming the new contract's network, bytecode and ABI. Do not substitute placeholder addresses or remove truthful limitations. Operator-wallet testing proves technical activity, not independent users. Official social accounts, launch posts, independent users and continuous operation require separate evidence.

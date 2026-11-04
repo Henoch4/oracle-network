@@ -38,6 +38,7 @@ contract OracleNetwork is ReentrancyGuard, Ownable {
 
     function addOracle(address o) external onlyOwner {
         require(o != address(0), "Zero address");
+        require(!oracle[o], "Already an oracle");
         oracle[o] = true;
         oracleCount += 1;
         emit OracleAdded(o);
