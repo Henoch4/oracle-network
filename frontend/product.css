@@ -66,3 +66,10 @@ body.suite-product button,body.suite-product a{cursor:pointer!important}
 .su-console #suite-message{border:0;border-left:3px solid currentColor;border-radius:0;padding:14px 18px}
 @media(max-width:700px){.su-console #suite-stats{grid-auto-flow:row;grid-auto-columns:1fr}.su-console .suite-stat{border-right:0;border-bottom:1px solid currentColor}.su-console .suite-stat:last-child{border-bottom:0}}
 
+/* ==== footer brand ==== */
+.suite-footer{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.footer-brand{display:flex;align-items:center;gap:8px}
+.footer-logo{width:20px;height:20px;flex-shrink:0}
+.footer-brand strong{font:700 14px/1.2 inherit;letter-spacing:-.01em}
+.footer-brand strong,.footer-brand svg{color:currentColor}
+@media(max-width:600px){.suite-footer{justify-content:center;gap:10px}.footer-brand{order:-1;width:100%;justify-content:center}}
